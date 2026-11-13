@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Craft to door — Artesanía peruana de origen</title>
+  <meta name="description" content="Textiles y cerámica de Ayacucho, Perú. Piezas únicas hechas a mano por artesanos locales en condiciones de comercio justo." />
+
+  <!-- Tipografías: Fraunces (titulares, óptica cálida) + Karla (texto, grotesca humana) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!--
+    Tailwind CSS (Play CDN) — solo para prototipo/base.
+    Para producción: compila Tailwind (npm + postcss) y elimina este <script>.
+  -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            night: '#141B2E',      // añil profundo (secciones oscuras, header, footer)
+            ink: '#1B2136',        // tinta principal sobre fondos claros
+            alabaster: '#F4F0E7',  // fondo claro, alabastro cálido
+            paper: '#FCFAF4',      // superficies de tarjetas
+            cochineal: '#A52A3B',  // rojo cochinilla (acento principal)
+            marigold: '#C98A2B',   // amarillo retama (acento secundario)
+            stone: '#676A73'       // texto atenuado
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            sans: ['Karla', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    :focus-visible { outline: 2px solid #C98A2B; outline-offset: 2px; }
+
+    /* Único momento de movimiento no solicitado: entrada del hero. */
+    @keyframes heroReveal {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .hero-reveal { animation: heroReveal .7s ease-out both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .hero-reveal { animation: none; opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+
+<body class="bg-alabaster font-sans text-ink antialiased">
+
+  <!-- Enlace de salto para teclado/lectores de pantalla -->
+  <a href="#catalogo" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-[3px] focus:bg-cochineal focus:px-4 focus:py-2 focus:text-paper">
+    Ir al catálogo
+  </a>
+
+  <!-- Motivo decorativo: "chakana escalonada" (motivo andino), definido una vez y reutilizado -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <defs>
+      <symbol id="step" viewBox="0 0 48 12">
+        <path d="M0 12 H6 V9 H12 V6 H18 V3 H24 V0 V3 H30 V6 H36 V9 H42 V12 H48 H0 Z" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- ============================================================ -->
+  <!-- CABECERA                                                      -->
+  <!-- ============================================================ -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-night/90 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 sm:h-[72px] sm:px-8">
+
+      <!-- Logo -->
+      <a href="#inicio" class="flex items-center gap-2.5 text-paper" aria-label="Qori Maki, inicio">
+        <svg class="h-3 w-8 text-marigold" aria-hidden="true"><use href="#step"/></svg>
+        <span class="font-display text-xl font-medium tracking-tight">Craft&nbsp;to door</span>
+      </a>
+
+      <!-- Navegación (escritorio) -->
+      <nav class="hidden items-center gap-8 md:flex" data-i18n-aria="nav.aria" aria-label="Navegación principal">
+        <a href="#catalogo"  class="text-sm text-paper/75 transition-colors hover:text-paper" data-i18n="nav.catalogo">Catálogo</a>
+        <a href="#artesanos" class="text-sm text-paper/75 transition-colors hover:text-paper" data-i18n="nav.artesanos">Nuestros Artesanos</a>
+        <a href="#nosotros"  class="text-sm text-paper/75 transition-colors hover:text-paper" data-i18n="nav.nosotros">Sobre Nosotros</a>
+        <a href="#contacto"  class="text-sm text-paper/75 transition-colors hover:text-paper" data-i18n="nav.contacto">Contacto</a>
+      </nav>
+
+      <!-- Idioma + CTA (escritorio) -->
+      <div class="hidden items-center gap-4 md:flex">
+        <div class="flex items-center rounded-[3px] border border-white/15 text-sm" role="group" aria-label="Idioma">
+          <button type="button" data-lang-btn="es" class="px-2.5 py-1.5 text-paper" aria-pressed="true">ES</button>
+          <button type="button" data-lang-btn="en" class="px-2.5 py-1.5 text-paper/60" aria-pressed="false">EN</button>
+        </div>
+        <a href="#contacto" class="rounded-[3px] bg-cochineal px-4 py-2 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332]" data-i18n="nav.cta">Cotizar</a>
+      </div>
+
+      <!-- Botón menú (móvil) -->
+      <button id="menu-btn" type="button" class="rounded-[3px] p-2 text-paper md:hidden" aria-expanded="false" aria-controls="mobile-menu" data-i18n-aria="menu.label" aria-label="Menú">
+        <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Menú móvil -->
+    <div id="mobile-menu" class="hidden border-t border-white/10 bg-night px-5 pb-6 pt-4 md:hidden">
+      <nav class="flex flex-col gap-4" aria-label="Navegación principal">
+        <a href="#catalogo"  class="text-paper/85" data-i18n="nav.catalogo">Catálogo</a>
+        <a href="#artesanos" class="text-paper/85" data-i18n="nav.artesanos">Nuestros Artesanos</a>
+        <a href="#nosotros"  class="text-paper/85" data-i18n="nav.nosotros">Sobre Nosotros</a>
+        <a href="#contacto"  class="text-paper/85" data-i18n="nav.contacto">Contacto</a>
+      </nav>
+      <div class="mt-6 flex items-center gap-4">
+        <div class="flex items-center rounded-[3px] border border-white/15 text-sm" role="group" aria-label="Idioma">
+          <button type="button" data-lang-btn="es" class="px-3 py-1.5 text-paper" aria-pressed="true">ES</button>
+          <button type="button" data-lang-btn="en" class="px-3 py-1.5 text-paper/60" aria-pressed="false">EN</button>
+        </div>
+        <a href="#contacto" class="rounded-[3px] bg-cochineal px-4 py-2 text-sm font-semibold text-paper" data-i18n="nav.cta">Cotizar</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <!-- ============================================================ -->
+    <!-- HERO                                                          -->
+    <!-- ============================================================ -->
+    <section id="inicio" class="relative isolate overflow-hidden bg-night text-paper">
+      <img src="img/manton-tejido.jpeg" alt="Mantón tejido de lana de ovino y alpaca" data-i18n-alt="hero.alt"
+           class="absolute inset-0 -z-10 h-full w-full object-cover opacity-75" />
+      <div class="absolute inset-0 -z-10 bg-gradient-to-r from-night via-night/85 to-night/20"></div>
+      <div class="absolute inset-0 -z-10 bg-gradient-to-t from-night/90 via-transparent to-night/40"></div>
+
+      <div class="mx-auto max-w-7xl px-5 py-28 sm:px-8 sm:py-40">
+        <div class="max-w-2xl hero-reveal">
+          <div class="flex items-center gap-3 text-marigold">
+            <svg class="h-2.5 w-12 text-marigold" aria-hidden="true"><use href="#step"/></svg>
+            <span class="text-sm font-medium" data-i18n="hero.kicker">Textiles y cerámica de Ayacucho, Perú</span>
+          </div>
+
+          <h1 class="mt-6 font-display text-4xl font-medium leading-[1.06] sm:text-5xl lg:text-6xl" data-i18n="hero.title">
+            Descubre el arte hecho a mano en cada tejido.
+          </h1>
+
+          <p class="mt-6 max-w-xl text-lg leading-relaxed text-paper/80" data-i18n="hero.sub">
+            Piezas únicas de textil y cerámica, creadas por artesanos locales en condiciones de comercio justo.
+            Cada objeto lleva consigo un lugar, una técnica y una historia.
+          </p>
+
+          <div class="mt-10 flex flex-wrap gap-4">
+            <a href="#catalogo" class="inline-flex items-center justify-center rounded-[3px] bg-cochineal px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332]" data-i18n="hero.cta1">Ver el catálogo</a>
+            <a href="#artesanos" class="inline-flex items-center justify-center rounded-[3px] border border-white/25 px-6 py-3 text-sm font-semibold text-paper transition-colors hover:border-white/60 hover:bg-white/5" data-i18n="hero.cta2">Conoce a los artesanos</a>
+          </div>
+
+          <div class="mt-14 flex max-w-lg divide-x divide-white/15 border-t border-white/15">
+            <span class="pr-6 pt-5 text-sm text-paper/70" data-i18n="hero.trust1">Comercio justo</span>
+            <span class="px-6 pt-5 text-sm text-paper/70" data-i18n="hero.trust2">Piezas únicas</span>
+            <span class="pl-6 pt-5 text-sm text-paper/70" data-i18n="hero.trust3">Hecho a mano</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- CATÁLOGO                                                      -->
+    <!-- ============================================================ -->
+    <section id="catalogo" class="scroll-mt-20 py-20 sm:py-28">
+      <div class="mx-auto max-w-7xl px-5 sm:px-8">
+        <div class="max-w-2xl">
+          <svg class="h-2.5 w-14 text-cochineal" aria-hidden="true"><use href="#step"/></svg>
+          <h2 class="mt-5 font-display text-3xl font-medium sm:text-4xl lg:text-5xl" data-i18n="catalog.title">Catálogo</h2>
+          <p class="mt-4 text-lg text-ink/70" data-i18n="catalog.sub">
+            Cinco piezas que cuentan una historia. Solicita una cotización y el artesano confirma el tiempo de elaboración.
+          </p>
+        </div>
+
+        <!-- Pieza destacada -->
+        <article class="mt-12 grid overflow-hidden border border-ink/10 bg-paper lg:grid-cols-2">
+          <div class="relative">
+            <img src="img/piedra-huamanga.jpeg" alt="Talla en piedra de Huamanga — Natividad andina" data-i18n-alt="p1.alt"
+                 class="h-full w-full object-cover" />
+            <span class="absolute left-4 top-4 rounded-[3px] bg-cochineal px-2.5 py-1 text-xs font-semibold text-paper" data-i18n="catalog.featured">Pieza destacada</span>
+          </div>
+
+          <div class="flex flex-col p-6 sm:p-10">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span class="rounded-[3px] border border-marigold/60 px-2.5 py-0.5 text-xs font-semibold text-[#8f631c]" data-i18n="p1.cat">Piedra de Huamanga</span>
+              <span class="text-sm text-stone" data-i18n="p1.origin">Vinchos, Ayacucho</span>
+              <span class="text-xs text-stone">CNI-G05</span>
+            </div>
+
+            <h3 class="mt-3 font-display text-2xl font-medium sm:text-3xl" data-product-name data-i18n="p1.name">Natividad Andina</h3>
+
+            <p class="mt-4 leading-relaxed text-ink/75" data-i18n="p1.story">
+              Tallada en alabastro por el maestro Dionisio Rojas. Cuchillos, formones y tallador eléctrico dan un acabado fino
+              a cada pieza; la obra se inspira en la vida del campesino andino y la alegría de la Navidad.
+            </p>
+
+            <dl class="mt-6 divide-y divide-ink/10 border-y border-ink/10 text-sm">
+              <div class="flex justify-between gap-4 py-2.5">
+                <dt class="text-stone" data-i18n="catalog.mat">Material</dt>
+                <dd class="text-right font-medium" data-i18n="p1.mat">Piedra de Huamanga (alabastro)</dd>
+              </div>
+              <div class="flex justify-between gap-4 py-2.5">
+                <dt class="text-stone" data-i18n="catalog.zone">Zona</dt>
+                <dd class="text-right font-medium" data-i18n="p1.zone">Vinchos, Ayacucho</dd>
+              </div>
+              <div class="flex justify-between gap-4 py-2.5">
+                <dt class="text-stone" data-i18n="catalog.tech">Técnica</dt>
+                <dd class="text-right font-medium" data-i18n="p1.tech">Talla a mano</dd>
+              </div>
+              <div class="flex justify-between gap-4 py-2.5">
+                <dt class="text-stone" data-i18n="catalog.meas">Medidas</dt>
+                <dd class="text-right font-medium" data-i18n="p1.meas">61 cm alto · base 30 × 52 cm · 3,90 kg</dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <button type="button" data-quote
+                      class="inline-flex w-full items-center justify-center rounded-[3px] bg-cochineal px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332] sm:w-auto"
+                      data-i18n="catalog.quote">Solicitar cotización</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Resto del catálogo -->
+        <div class="mt-6 grid gap-6 sm:grid-cols-2">
+
+          <!-- 2. Iglesia Andina -->
+          <article class="flex flex-col overflow-hidden border border-ink/10 bg-paper transition-colors hover:border-ink/25">
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img src="img/ceramica-iglesia-andina.jpeg" alt="Escultura cerámica decorativa de iglesia andina" data-i18n-alt="p2.alt"
+                   class="h-full w-full object-cover" loading="lazy" />
+              <span class="absolute left-3 top-3 rounded-[3px] bg-paper/90 px-2.5 py-1 text-xs font-semibold text-ink backdrop-blur" data-i18n="p2.cat">Cerámica</span>
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <span class="text-xs text-stone" data-i18n="p2.origin">Quinua, Ayacucho</span>
+              <h3 class="mt-1.5 font-display text-xl font-medium" data-product-name data-i18n="p2.name">Iglesia Andina</h3>
+              <p class="mt-3 text-sm leading-relaxed text-ink/70" data-i18n="p2.story">
+                Escultura decorativa inspirada en las iglesias tradicionales andinas. Modelada a mano con arcilla roja y puzolana,
+                y pintada con pigmentos naturales en blanco, rojo, marrón y amarillo.
+              </p>
+              <dl class="mt-5 space-y-2 border-t border-ink/10 pt-4 text-sm">
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.mat">Material</dt><dd class="text-right font-medium" data-i18n="p2.mat">Arcilla roja y puzolana</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.zone">Zona</dt><dd class="text-right font-medium" data-i18n="p2.zone">Quinua, Ayacucho</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.tech">Técnica</dt><dd class="text-right font-medium" data-i18n="p2.tech">Modelado a mano</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.meas">Medidas</dt><dd class="text-right font-medium" data-i18n="p2.meas">27 cm alto · 22 cm ancho · 1,10 kg</dd></div>
+              </dl>
+              <button type="button" data-quote
+                      class="mt-5 inline-flex w-full items-center justify-center rounded-[3px] bg-cochineal px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332]"
+                      data-i18n="catalog.quote">Solicitar cotización</button>
+            </div>
+          </article>
+
+          <!-- 3. Plato Primavera Floral -->
+          <article class="flex flex-col overflow-hidden border border-ink/10 bg-paper transition-colors hover:border-ink/25">
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img src="img/plato-primavera-floral.jpeg" alt="Plato primavera floral tallado en piedra de Huamanga" data-i18n-alt="p3.alt"
+                   class="h-full w-full object-cover" loading="lazy" />
+              <span class="absolute left-3 top-3 rounded-[3px] bg-paper/90 px-2.5 py-1 text-xs font-semibold text-ink backdrop-blur" data-i18n="p3.cat">Piedra de Huamanga</span>
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <span class="text-xs text-stone" data-i18n="p3.origin">Ayacucho</span>
+              <h3 class="mt-1.5 font-display text-xl font-medium" data-product-name data-i18n="p3.name">Plato Primavera Floral</h3>
+              <p class="mt-3 text-sm leading-relaxed text-ink/70" data-i18n="p3.story">
+                Un plato decorativo que evoca la llegada de la primavera en alegres flores amarillas. Tallado y pulido a mano
+                en piedra de Huamanga; cada pieza es única e irrepetible.
+              </p>
+              <dl class="mt-5 space-y-2 border-t border-ink/10 pt-4 text-sm">
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.mat">Material</dt><dd class="text-right font-medium" data-i18n="p3.mat">Piedra de Huamanga</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.zone">Zona</dt><dd class="text-right font-medium" data-i18n="p3.zone">Ayacucho</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.tech">Técnica</dt><dd class="text-right font-medium" data-i18n="p3.tech">Tallado en piedra</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.meas">Medidas</dt><dd class="text-right font-medium" data-i18n="p3.meas">9,5 × 9,5 × 1 cm</dd></div>
+              </dl>
+              <button type="button" data-quote
+                      class="mt-5 inline-flex w-full items-center justify-center rounded-[3px] bg-cochineal px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332]"
+                      data-i18n="catalog.quote">Solicitar cotización</button>
+            </div>
+          </article>
+
+          <!-- 4. Retablo Cosecha de Tuna -->
+          <article class="flex flex-col overflow-hidden border border-ink/10 bg-paper transition-colors hover:border-ink/25">
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img src="img/retablo-cosecha-tuna.jpeg" alt="Retablo tradicional de la cosecha de tuna" data-i18n-alt="p4.alt"
+                   class="h-full w-full object-cover" loading="lazy" />
+              <span class="absolute left-3 top-3 rounded-[3px] bg-paper/90 px-2.5 py-1 text-xs font-semibold text-ink backdrop-blur" data-i18n="p4.cat">Retablo</span>
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <span class="text-xs text-stone" data-i18n="p4.origin">Ayacucho</span>
+              <h3 class="mt-1.5 font-display text-xl font-medium" data-product-name data-i18n="p4.name">Retablo: Cosecha de Tuna</h3>
+              <p class="mt-3 text-sm leading-relaxed text-ink/70" data-i18n="p4.story">
+                Retablo que retrata la cosecha de la tuna, fruta típica de la zona, con esfuerzo y alegría. Madera tallada
+                y pintada con colores vivos y detalles en relieve.
+              </p>
+              <dl class="mt-5 space-y-2 border-t border-ink/10 pt-4 text-sm">
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.mat">Material</dt><dd class="text-right font-medium" data-i18n="p4.mat">Triplay y harina</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.zone">Zona</dt><dd class="text-right font-medium" data-i18n="p4.zone">Ayacucho</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.tech">Técnica</dt><dd class="text-right font-medium" data-i18n="p4.tech">Manual</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.meas">Medidas</dt><dd class="text-right font-medium" data-i18n="p4.meas">35 cm alto · 20 × 8 cm</dd></div>
+              </dl>
+              <button type="button" data-quote
+                      class="mt-5 inline-flex w-full items-center justify-center rounded-[3px] bg-cochineal px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332]"
+                      data-i18n="catalog.quote">Solicitar cotización</button>
+            </div>
+          </article>
+
+          <!-- 5. Mantón Tejido -->
+          <article class="flex flex-col overflow-hidden border border-ink/10 bg-paper transition-colors hover:border-ink/25">
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img src="img/manton-tejido.jpeg" alt="Mantón tejido de lana de ovino y alpaca" data-i18n-alt="p5.alt"
+                   class="h-full w-full object-cover" loading="lazy" />
+              <span class="absolute left-3 top-3 rounded-[3px] bg-paper/90 px-2.5 py-1 text-xs font-semibold text-ink backdrop-blur" data-i18n="p5.cat">Textil</span>
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <span class="text-xs text-stone" data-i18n="p5.origin">Ayacucho</span>
+              <h3 class="mt-1.5 font-display text-xl font-medium" data-product-name data-i18n="p5.name">Mantón Tejido</h3>
+              <p class="mt-3 text-sm leading-relaxed text-ink/70" data-i18n="p5.story">
+                Tejido a cintura con hilo torcido, en lana de ovino y alpaca. Colores cálidos de amarillo, azul y rojizo
+                que abrigan y cuentan la tradición textil andina.
+              </p>
+              <dl class="mt-5 space-y-2 border-t border-ink/10 pt-4 text-sm">
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.mat">Material</dt><dd class="text-right font-medium" data-i18n="p5.mat">Lana de ovino y alpaca</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.zone">Zona</dt><dd class="text-right font-medium" data-i18n="p5.zone">Ayacucho</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.tech">Técnica</dt><dd class="text-right font-medium" data-i18n="p5.tech">Tejido a cintura, hilo torcido</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-stone" data-i18n="catalog.meas">Medidas</dt><dd class="text-right font-medium" data-i18n="p5.meas">2 m largo · 85 cm ancho</dd></div>
+              </dl>
+              <button type="button" data-quote
+                      class="mt-5 inline-flex w-full items-center justify-center rounded-[3px] bg-cochineal px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332]"
+                      data-i18n="catalog.quote">Solicitar cotización</button>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- NUESTROS ARTESANOS                                            -->
+    <!-- ============================================================ -->
+    <section id="artesanos" class="scroll-mt-20 bg-night py-20 text-paper sm:py-28">
+      <div class="mx-auto max-w-7xl px-5 sm:px-8">
+        <div class="max-w-2xl">
+          <svg class="h-2.5 w-14 text-marigold" aria-hidden="true"><use href="#step"/></svg>
+          <h2 class="mt-5 font-display text-3xl font-medium sm:text-4xl lg:text-5xl" data-i18n="artisans.title">Nuestros Artesanos</h2>
+          <p class="mt-4 text-lg text-paper/75" data-i18n="artisans.lead">
+            Trabajamos directamente con cada artesano, sin intermediarios. Pagamos un precio justo por horas de trabajo reales
+            y contamos su historia junto a cada pieza.
+          </p>
+        </div>
+
+        <div class="mt-12 grid gap-6 lg:grid-cols-2">
+          <!-- Artesano destacado -->
+          <div class="relative overflow-hidden border border-white/10 bg-white/5 p-8 sm:p-10">
+            <svg class="absolute -right-4 -top-4 h-24 w-24 text-marigold/15" aria-hidden="true"><use href="#step"/></svg>
+            <span class="text-sm font-medium text-marigold" data-i18n="artisans.featureRole">Maestro tallador, Vinchos</span>
+            <h3 class="mt-2 font-display text-3xl font-medium" data-i18n="artisans.featureName">Dionisio Rojas</h3>
+            <p class="mt-4 max-w-md leading-relaxed text-paper/75" data-i18n="artisans.featureBio">
+              Sus tallas en piedra de Huamanga nacen de la vida cotidiana del ande.
+            </p>
+          </div>
+
+          <!-- Valores del modelo -->
+          <div class="grid gap-6 sm:grid-cols-1">
+            <div class="border border-white/10 bg-white/5 p-6">
+              <h4 class="font-display text-xl font-medium text-marigold" data-i18n="artisans.v1t">Comercio justo</h4>
+              <p class="mt-2 text-paper/75" data-i18n="artisans.v1d">Un precio directo y justo para el artesano.</p>
+            </div>
+            <div class="border border-white/10 bg-white/5 p-6">
+              <h4 class="font-display text-xl font-medium text-marigold" data-i18n="artisans.v2t">Piezas únicas</h4>
+              <p class="mt-2 text-paper/75" data-i18n="artisans.v2d">Cada objeto es irrepetible y lleva una historia.</p>
+            </div>
+            <div class="border border-white/10 bg-white/5 p-6">
+              <h4 class="font-display text-xl font-medium text-marigold" data-i18n="artisans.v3t">Hecho a mano</h4>
+              <p class="mt-2 text-paper/75" data-i18n="artisans.v3d">Técnicas ancestrales que vuelven a valorarse.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SOBRE NOSOTROS                                                -->
+    <!-- ============================================================ -->
+    <section id="nosotros" class="scroll-mt-20 bg-paper py-20 sm:py-28">
+      <div class="mx-auto grid max-w-7xl items-start gap-10 px-5 sm:px-8 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+        <div>
+          <svg class="h-2.5 w-14 text-cochineal" aria-hidden="true"><use href="#step"/></svg>
+          <h2 class="mt-5 font-display text-3xl font-medium sm:text-4xl lg:text-5xl" data-i18n="about.title">Sobre Nosotros</h2>
+          <p class="mt-6 max-w-xl text-lg leading-relaxed text-ink/75" data-i18n="about.body">
+            Craft to door, un portal o catálogo digital dedicado a la artesanía representa un puente fundamental entre la tradición local 
+            y el mercado contemporáneo, permitiendo que pequeños artesanos transformen sus saberes ancestrales en unidades de negocio sostenibles. 
+            Al centralizar la oferta de productos hechos a mano en un espacio inclusivo, accesible y visualmente atractivo, la plataforma visibiliza 
+            el valor cultural de cada pieza mientras elimina intermediarios innecesarios para conectar de manera directa al creador con el consumidor.
+          </p>
+        </div>
+
+        <figure class="border-l-2 border-cochineal pl-6">
+          <blockquote class="font-display text-2xl font-medium leading-snug text-ink sm:text-3xl" data-i18n="about.pullquote">
+            Cada compra es una inversión directa en una familia, una técnica y un territorio.
+          </blockquote>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- CONTACTO                                                      -->
+    <!-- ============================================================ -->
+    <section id="contacto" class="scroll-mt-20 py-20 sm:py-28">
+      <div class="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <svg class="h-2.5 w-14 text-cochineal" aria-hidden="true"><use href="#step"/></svg>
+          <h2 class="mt-5 font-display text-3xl font-medium sm:text-4xl lg:text-5xl" data-i18n="contact.title">Contacto</h2>
+          <p class="mt-4 max-w-md text-lg text-ink/70" data-i18n="contact.lead">
+            Cuéntanos qué pieza te enamoró y te enviamos una cotización con el tiempo de elaboración.
+          </p>
+
+          <div class="mt-10 space-y-4 text-sm">
+            <h3 class="font-display text-lg font-medium text-ink" data-i18n="contact.infoTitle">Canales directos</h3>
+            <div class="flex items-center gap-3">
+              <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-stone" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>
+              </svg>
+              <a href="mailto:hola@crafttodoor.pe" class="text-ink underline-offset-4 hover:underline">CorCraftodoor@gmail.com</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-stone" fill="currentColor" aria-hidden="true">
+                <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.2 2.2Z"/>
+              </svg>
+              <a href="https://wa.me/51952434543" class="text-ink underline-offset-4 hover:underline">WhatsApp · +51 952 434 543</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-stone" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M12 21s-7-5.1-7-11a7 7 0 0 1 14 0c0 5.9-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/>
+              </svg>
+              <span class="text-ink" data-i18n="contact.locValue">Lima, Perú</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="quote-form" class="border border-ink/10 bg-paper p-6 sm:p-8">
+          <h3 class="font-display text-xl font-medium" data-i18n="contact.formTitle">Solicita una cotización</h3>
+
+          <div class="mt-6 space-y-5">
+            <div>
+              <label for="nombre" class="mb-1.5 block text-sm font-medium text-ink" data-i18n="contact.name">Nombre</label>
+              <input id="nombre" name="nombre" type="text" required autocomplete="name" placeholder="Tu nombre"
+                     data-i18n-ph="contact.namePh"
+                     class="w-full rounded-[3px] border border-ink/15 bg-white px-3 py-2.5 text-ink placeholder:text-stone/70" />
+            </div>
+            <div>
+              <label for="correo" class="mb-1.5 block text-sm font-medium text-ink" data-i18n="contact.email">Correo electrónico</label>
+              <input id="correo" name="correo" type="email" required autocomplete="email" placeholder="tu@correo.com"
+                     data-i18n-ph="contact.emailPh"
+                     class="w-full rounded-[3px] border border-ink/15 bg-white px-3 py-2.5 text-ink placeholder:text-stone/70" />
+            </div>
+            <div>
+              <label for="mensaje" class="mb-1.5 block text-sm font-medium text-ink" data-i18n="contact.msg">Mensaje</label>
+              <textarea id="mensaje" name="mensaje" rows="4" required placeholder="Cuéntanos qué pieza te interesa…"
+                        data-i18n-ph="contact.msgPh"
+                        class="w-full resize-y rounded-[3px] border border-ink/15 bg-white px-3 py-2.5 text-ink placeholder:text-stone/70"></textarea>
+            </div>
+          </div>
+
+          <button type="submit"
+                  class="mt-6 inline-flex w-full items-center justify-center rounded-[3px] bg-cochineal px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-[#8f2332]"
+                  data-i18n="contact.send">Enviar solicitud</button>
+
+          <p id="form-success" class="mt-4 hidden rounded-[3px] border border-marigold/50 bg-marigold/10 px-4 py-3 text-sm text-ink" data-i18n="contact.success">
+            ¡Gracias! Recibimos tu solicitud y te responderemos pronto.
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- PIE DE PÁGINA                                                 -->
+  <!-- ============================================================ -->
+  <footer class="bg-night text-paper">
+    <!-- Franja decorativa de motivos andinos -->
+    <div class="border-t border-white/10">
+      <div class="mx-auto flex max-w-7xl justify-between px-5 pt-6 sm:px-8" aria-hidden="true">
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+        <svg class="h-2 w-8 text-marigold/40"><use href="#step"/></svg>
+      </div>
+    </div>
+
+    <div class="mx-auto max-w-7xl px-5 py-14 sm:px-8">
+      <div class="grid gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+
+        <div>
+          <a href="#inicio" class="flex items-center gap-2.5 text-paper">
+            <svg class="h-3 w-8 text-marigold" aria-hidden="true"><use href="#step"/></svg>
+            <span class="font-display text-xl font-medium">Craft&nbsp;to door</span>
+          </a>
+          <p class="mt-4 max-w-xs text-sm leading-relaxed text-paper/70" data-i18n="footer.tagline">
+            Un puente entre los artesanos de Ayacucho y los viajeros que valoran lo auténtico.
+          </p>
+
+          <div class="mt-6 flex gap-3">
+            <a href="#" class="flex h-9 w-9 items-center justify-center rounded-[3px] border border-white/15 text-paper/80 transition-colors hover:border-white/40 hover:text-paper" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a href="#" class="flex h-9 w-9 items-center justify-center rounded-[3px] border border-white/15 text-paper/80 transition-colors hover:border-white/40 hover:text-paper" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true">
+                <path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H8v3h3v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1z"/>
+              </svg>
+            </a>
+            <a href="https://wa.me/51999999999" class="flex h-9 w-9 items-center justify-center rounded-[3px] border border-white/15 text-paper/80 transition-colors hover:border-white/40 hover:text-paper" aria-label="WhatsApp">
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true">
+                <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.2 2.2Z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <nav aria-label="Catálogo">
+          <h3 class="text-sm font-semibold text-paper/60" data-i18n="footer.colCat">Catálogo</h3>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li><a href="#catalogo" class="text-paper/80 hover:text-paper" data-i18n="footer.c1">Textiles</a></li>
+            <li><a href="#catalogo" class="text-paper/80 hover:text-paper" data-i18n="footer.c2">Cerámica</a></li>
+            <li><a href="#catalogo" class="text-paper/80 hover:text-paper" data-i18n="footer.c3">Piedra de Huamanga</a></li>
+            <li><a href="#catalogo" class="text-paper/80 hover:text-paper" data-i18n="footer.c4">Retablos</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="Empresa">
+          <h3 class="text-sm font-semibold text-paper/60" data-i18n="footer.colCo">Empresa</h3>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li><a href="#nosotros" class="text-paper/80 hover:text-paper" data-i18n="footer.n1">Sobre nosotros</a></li>
+            <li><a href="#artesanos" class="text-paper/80 hover:text-paper" data-i18n="footer.n2">Nuestros artesanos</a></li>
+            <li><a href="#artesanos" class="text-paper/80 hover:text-paper" data-i18n="footer.n3">Comercio justo</a></li>
+            <li><a href="#contacto" class="text-paper/80 hover:text-paper" data-i18n="footer.n4">Contacto</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="Ayuda">
+          <h3 class="text-sm font-semibold text-paper/60" data-i18n="footer.colHelp">Ayuda</h3>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li><a href="#" class="text-paper/80 hover:text-paper" data-i18n="footer.h1">Envíos y entregas</a></li>
+            <li><a href="#" class="text-paper/80 hover:text-paper" data-i18n="footer.h2">Cambios y devoluciones</a></li>
+            <li><a href="#" class="text-paper/80 hover:text-paper" data-i18n="footer.h3">Preguntas frecuentes</a></li>
+            <li><a href="#" class="text-paper/80 hover:text-paper" data-i18n="footer.h4">Términos</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="mt-12 flex flex-col gap-6 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="mr-2 text-xs text-paper/60" data-i18n="footer.payTitle">Pago seguro</span>
+          <span class="rounded-[3px] border border-white/15 px-2 py-0.5 text-xs text-paper/70">Visa</span>
+          <span class="rounded-[3px] border border-white/15 px-2 py-0.5 text-xs text-paper/70">Mastercard</span>
+          <span class="rounded-[3px] border border-white/15 px-2 py-0.5 text-xs text-paper/70">Amex</span>
+          <span class="rounded-[3px] border border-white/15 px-2 py-0.5 text-xs text-paper/70">PayPal</span>
+          <span class="rounded-[3px] border border-white/15 px-2 py-0.5 text-xs text-paper/70">Yape</span>
+          <span class="rounded-[3px] border border-white/15 px-2 py-0.5 text-xs text-paper/70">Plin</span>
+        </div>
+        <p class="text-sm text-paper/60" data-i18n="footer.rights">© 2026 Craft to door. Hecho con orgullo en Lima, Perú.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ================================================================
+    // Internacionalización ES / EN
+    // ================================================================
+    const I18N = {
+      en: {
+        'nav.catalogo': 'Catalogue',
+        'nav.artesanos': 'Our artisans',
+        'nav.nosotros': 'About us',
+        'nav.contacto': 'Contact',
+        'nav.cta': 'Get a quote',
+        'nav.aria': 'Main navigation',
+        'menu.label': 'Menu',
+
+        'hero.kicker': 'Textiles & ceramics from Ayacucho, Peru',
+        'hero.title': 'Discover hand-made art in every weave.',
+        'hero.sub': 'One-of-a-kind textiles and ceramics, created by local artisans under fair-trade conditions. Every piece carries a place, a technique and a story.',
+        'hero.cta1': 'Browse the catalogue',
+        'hero.cta2': 'Meet the artisans',
+        'hero.trust1': 'Fair trade',
+        'hero.trust2': 'One-of-a-kind',
+        'hero.trust3': 'Hand-made',
+        'hero.alt': 'Woven shawl in sheep and alpaca wool',
+
+        'catalog.title': 'Catalogue',
+        'catalog.sub': 'Five pieces that tell a story. Request a quote and the artisan will confirm the making time.',
+        'catalog.featured': 'Featured piece',
+        'catalog.mat': 'Material',
+        'catalog.zone': 'Region',
+        'catalog.tech': 'Technique',
+        'catalog.meas': 'Measurements',
+        'catalog.quote': 'Request a quote',
+
+        'p1.name': 'Andean Nativity',
+        'p1.cat': 'Huamanga stone',
+        'p1.origin': 'Vinchos, Ayacucho',
+        'p1.story': 'Carved in alabaster by master Gálvez Quispe. Knives, chisels and an electric carver give each piece a fine finish; the work draws on everyday Andean life and the joy of Christmas.',
+        'p1.mat': 'Huamanga stone (alabaster)',
+        'p1.zone': 'Vinchos, Ayacucho',
+        'p1.tech': 'Hand carving',
+        'p1.meas': '61 cm tall · 30 × 52 cm base · 3.9 kg',
+        'p1.alt': 'Huamanga stone carving — Andean Nativity',
+
+        'p2.name': 'Andean Church',
+        'p2.cat': 'Ceramics',
+        'p2.origin': 'Quinua, Ayacucho',
+        'p2.story': 'Decorative sculpture inspired by traditional Andean churches. Hand-modelled in red clay and pozzolan, and painted with natural pigments in white, red, brown and yellow.',
+        'p2.mat': 'Red clay & pozzolan',
+        'p2.zone': 'Quinua, Ayacucho',
+        'p2.tech': 'Hand modelling',
+        'p2.meas': '27 cm tall · 22 cm wide · 1.1 kg',
+        'p2.alt': 'Hand-made ceramic church sculpture',
+
+        'p3.name': 'Spring Blossom Plate',
+        'p3.cat': 'Huamanga stone',
+        'p3.origin': 'Ayacucho',
+        'p3.story': 'A decorative plate that evokes the arrival of spring in cheerful yellow blossoms. Hand-carved and polished from Huamanga stone; every piece is one of a kind.',
+        'p3.mat': 'Huamanga stone',
+        'p3.zone': 'Ayacucho',
+        'p3.tech': 'Stone carving',
+        'p3.meas': '9.5 × 9.5 × 1 cm',
+        'p3.alt': 'Spring blossom plate carved in Huamanga stone',
+
+        'p4.name': 'Retablo: Prickly Pear Harvest',
+        'p4.cat': 'Retablo',
+        'p4.origin': 'Ayacucho',
+        'p4.story': 'A retablo depicting the prickly-pear harvest, a fruit typical of the region, with effort and joy. Carved wood painted in vivid colours with relief details.',
+        'p4.mat': 'Plywood & flour paste',
+        'p4.zone': 'Ayacucho',
+        'p4.tech': 'Hand-made',
+        'p4.meas': '35 cm tall · 20 × 8 cm',
+        'p4.alt': 'Retablo depicting the prickly pear harvest',
+
+        'p5.name': 'Woven Shawl',
+        'p5.cat': 'Textile',
+        'p5.origin': 'Ayacucho',
+        'p5.story': 'Waist-loom woven with twisted yarn, in sheep and alpaca wool. Warm shades of yellow, blue and rust that shelter and carry Andean weaving tradition.',
+        'p5.mat': 'Sheep & alpaca wool',
+        'p5.zone': 'Ayacucho',
+        'p5.tech': 'Waist-loom, twisted yarn',
+        'p5.meas': '2 m long · 85 cm wide',
+        'p5.alt': 'Woven shawl in sheep and alpaca wool',
+
+        'artisans.title': 'Our artisans',
+        'artisans.lead': 'We work directly with each artisan, with no middlemen. We pay a fair price for real hours of work and tell their story beside every piece.',
+        'artisans.featureRole': 'Master carver, Vinchos, Ayacucho',
+        'artisans.featureName': 'Gálvez Quispe',
+        'artisans.featureBio': 'His Huamanga-stone carvings are born from the everyday life of the high Andes.',
+        'artisans.v1t': 'Fair trade',
+        'artisans.v1d': 'A direct, fair price for the artisan.',
+        'artisans.v2t': 'One-of-a-kind',
+        'artisans.v2d': 'Every object is unique and carries a story.',
+        'artisans.v3t': 'Hand-made',
+        'artisans.v3d': 'Ancestral techniques, brought back to life.',
+
+        'about.title': 'About us',
+        'about.body': 'Qori Maki is a bridge between the artisans of Ayacucho and travellers who value what is authentic. We revalue handcraft: we present it with its origin, its technique and its story, and we make sure the artisan is paid fairly.',
+        'about.pullquote': 'Every purchase is a direct investment in a family, a technique and a territory.',
+
+        'contact.title': 'Contact',
+        'contact.lead': 'Tell us which piece you love and we will send you a quote with the making time.',
+        'contact.infoTitle': 'Direct channels',
+        'contact.locValue': 'Ayacucho, Peru',
+        'contact.formTitle': 'Request a quote',
+        'contact.name': 'Name',
+        'contact.namePh': 'Your name',
+        'contact.email': 'Email',
+        'contact.emailPh': 'you@email.com',
+        'contact.msg': 'Message',
+        'contact.msgPh': 'Tell us which piece you are interested in…',
+        'contact.send': 'Send request',
+        'contact.success': 'Thank you! We have received your request and will reply soon.',
+
+        'footer.tagline': 'A bridge between Ayacucho\'s artisans and travellers who value what is authentic.',
+        'footer.colCat': 'Catalogue',
+        'footer.colCo': 'Company',
+        'footer.colHelp': 'Help',
+        'footer.c1': 'Textiles',
+        'footer.c2': 'Ceramics',
+        'footer.c3': 'Huamanga stone',
+        'footer.c4': 'Retablos',
+        'footer.n1': 'About us',
+        'footer.n2': 'Our artisans',
+        'footer.n3': 'Fair trade',
+        'footer.n4': 'Contact',
+        'footer.h1': 'Shipping & delivery',
+        'footer.h2': 'Returns',
+        'footer.h3': 'FAQ',
+        'footer.h4': 'Terms',
+        'footer.payTitle': 'Secure payment',
+        'footer.rights': '© 2026 Qori Maki. Made with pride in Ayacucho, Peru.'
+      }
+    };
+
+    (function () {
+      // Texto visible (span/h2/p/button/...)
+      const textEls = document.querySelectorAll('[data-i18n]');
+      const esText = new Map();
+      textEls.forEach((el) => esText.set(el, el.textContent.trim()));
+
+      // Placeholders de inputs
+      const phEls = document.querySelectorAll('[data-i18n-ph]');
+      const esPh = new Map();
+      phEls.forEach((el) => esPh.set(el, el.getAttribute('placeholder') || ''));
+
+      // Aria-labels
+      const ariaEls = document.querySelectorAll('[data-i18n-aria]');
+      const esAria = new Map();
+      ariaEls.forEach((el) => esAria.set(el, el.getAttribute('aria-label') || ''));
+
+      // Alt de imágenes
+      const altEls = document.querySelectorAll('[data-i18n-alt]');
+      const esAlt = new Map();
+      altEls.forEach((el) => esAlt.set(el, el.getAttribute('alt') || ''));
+
+      let currentLang = 'es';
+      try { currentLang = localStorage.getItem('qori-lang') || 'es'; } catch (e) {}
+
+      function apply(lang) {
+        textEls.forEach((el) => {
+          const key = el.getAttribute('data-i18n');
+          if (!key) return;
+          el.textContent = lang === 'es' ? (esText.get(el) ?? '') : (I18N.en[key] ?? esText.get(el) ?? '');
+        });
+        phEls.forEach((el) => {
+          const key = el.getAttribute('data-i18n-ph');
+          if (!key) return;
+          el.setAttribute('placeholder', lang === 'es' ? (esPh.get(el) ?? '') : (I18N.en[key] ?? esPh.get(el) ?? ''));
+        });
+        ariaEls.forEach((el) => {
+          const key = el.getAttribute('data-i18n-aria');
+          if (!key) return;
+          el.setAttribute('aria-label', lang === 'es' ? (esAria.get(el) ?? '') : (I18N.en[key] ?? esAria.get(el) ?? ''));
+        });
+        altEls.forEach((el) => {
+          const key = el.getAttribute('data-i18n-alt');
+          if (!key) return;
+          el.setAttribute('alt', lang === 'es' ? (esAlt.get(el) ?? '') : (I18N.en[key] ?? esAlt.get(el) ?? ''));
+        });
+
+        document.documentElement.lang = lang;
+
+        document.querySelectorAll('[data-lang-btn]').forEach((btn) => {
+          const active = btn.getAttribute('data-lang-btn') === lang;
+          btn.classList.toggle('text-paper', active);
+          btn.classList.toggle('text-paper/60', !active);
+          btn.setAttribute('aria-pressed', String(active));
+        });
+      }
+
+      function setLang(lang) {
+        currentLang = lang;
+        try { localStorage.setItem('qori-lang', lang); } catch (e) {}
+        apply(lang);
+      }
+
+      document.querySelectorAll('[data-lang-btn]').forEach((btn) => {
+        btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang-btn')));
+      });
+
+      apply(currentLang);
+    })();
+
+    // ================================================================
+    // Menú móvil
+    // ================================================================
+    (function () {
+      const btn = document.getElementById('menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', () => {
+        const willOpen = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !willOpen);
+        btn.setAttribute('aria-expanded', String(willOpen));
+      });
+
+      menu.querySelectorAll('a').forEach((a) => {
+        a.addEventListener('click', () => {
+          menu.classList.add('hidden');
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      });
+    })();
+
+    // ================================================================
+    // Botones "Solicitar cotización" → rellenan el mensaje y bajan al contacto
+    // ================================================================
+    (function () {
+      document.querySelectorAll('[data-quote]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const card = btn.closest('article');
+          const nameEl = card ? card.querySelector('[data-product-name]') : null;
+          const name = nameEl ? nameEl.textContent.trim() : '';
+          const msg = document.getElementById('mensaje');
+          if (msg) {
+            const prefix = document.documentElement.lang === 'en'
+              ? "Hello, I'd like a quote for: "
+              : 'Hola, me interesa cotizar: ';
+            msg.value = prefix + name + '.';
+          }
+          document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    })();
+
+    // ================================================================
+    // Formulario (base: sin backend, muestra confirmación)
+    // ================================================================
+    (function () {
+      const form = document.getElementById('quote-form');
+      const success = document.getElementById('form-success');
+      if (!form || !success) return;
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        form.classList.add('hidden');
+        success.classList.remove('hidden');
+      });
+    })();
+  </script>
+</body>
+</html>
